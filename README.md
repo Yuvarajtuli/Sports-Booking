@@ -5,10 +5,10 @@
 
 | Name          | Branch | Roll Number | Email ID              | GitHub ID     |
 |---------------|--------|-------------|----------------------|---------------|
-| Ganga Sharma    | 2023 4Y | 2023sl70019  | gangagsharmaa@gmail.com              | Gangaashar |
-| Megha Keshri    | 2023 4Y | 2023sl70014  | keshrimegha20@gmail.com             | MeghaKeshri |
-| Shivam    | 2023 4Y | 2023sl70010  | Shivamchitkara777@gmail.com              | Shivamc12 |
-| Yuvaraj Tuli    | 2023 4Y | 2023sl70003  | yuvarajtuli@gmail.com              | YuvarajTuli01 |
+| Krish Bharadwaj    | 2023 4Y | 2023sl70033  | 2023sl70033@wilp.bits-pilani.ac.in  | krish33 |
+| Chandan Pathak    | 2023 4Y | 2023sl70039  | 2023sl70039@wilp.bits-pilani.ac.in | Chandan |
+| Rohit Sharma   | 2023 4Y | 2023sl70009  | 2023sl70009@wilp.bits-pilani.ac.in | rohitsharma27011 |
+| Yuvaraj Tuli    | 2023 4Y | 2023sl70003  | yuvarajtuli@gmail.com | YuvarajTuli01 |
 
 
 # Badminton Court Booking Application Documentation
@@ -225,3 +225,4 @@ It is structured cleanly enough to scale into a production-level app with only i
 
 Created by: **Yuvaraj(70003), Shivam(70010), Ganga(70019), Megha(70014)** 🚀  
 Tech Stack: **Node.js, Express, JSON Storage, React**
+
