@@ -1,16 +1,18 @@
 import { Builder } from "selenium-webdriver";
-import edge from "selenium-webdriver/edge.js";
+import chrome from "selenium-webdriver/chrome.js";
 
 export default async function buildDriver() {
-  const service = new edge.ServiceBuilder("./msedgedriver.exe");
+  const options = new chrome.Options();
 
-  const options = new edge.Options();
-  // options.addArguments("--headless=new"); // enable headless if needed
+  // Required for CI (GitHub Actions)
+  options.addArguments("--headless=new");
+  options.addArguments("--no-sandbox");
+  options.addArguments("--disable-gpu");
+  options.addArguments("--disable-dev-shm-usage");
 
   const driver = await new Builder()
-    .forBrowser("MicrosoftEdge")
-    .setEdgeOptions(options)
-    .setEdgeService(service)
+    .forBrowser("chrome")
+    .setChromeOptions(options)
     .build();
 
   return driver;
