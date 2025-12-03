@@ -97,7 +97,7 @@ jobs:
         working-directory: frontend
         run: |
           npm install -g serve
-          nohup serve -s build -l 3000 &
+          nohup serve -s build -l 3000 --single &
           sleep 5
 
       # Run WDIO tests
