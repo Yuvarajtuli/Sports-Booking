@@ -1,4 +1,4 @@
-name: Full CI Pipeline (Build → WDIO → Sonar)
+name: Full CI Pipeline (Build → WDIO + Sonar in Parallel)
 
 on:
   push:
@@ -57,11 +57,11 @@ jobs:
 
 
   # ----------------------------------------------------------
-  # 2️⃣ WDIO UI TEST JOB (replaces Selenium)
+  # 2️⃣ WDIO TESTS (RUNS PARALLEL AFTER BUILD)
   # ----------------------------------------------------------
   wdio-tests:
     runs-on: ubuntu-latest
-    needs: build
+    needs: build     # run after build (parallel with sonar)
 
     steps:
       - name: Checkout Code
@@ -97,7 +97,7 @@ jobs:
         working-directory: frontend
         run: |
           npm install -g serve
-          nohup serve -s build -l 3000 &
+          nohup serve -s build -l 3000 --single &
           sleep 5
 
       # Run WDIO tests
@@ -107,11 +107,11 @@ jobs:
 
 
   # ----------------------------------------------------------
-  # 3️⃣ SONARCLOUD ANALYSIS
+  # 3️⃣ SONARCLOUD ANALYSIS (RUNS PARALLEL AFTER BUILD)
   # ----------------------------------------------------------
   sonar:
     runs-on: ubuntu-latest
-    needs: wdio-tests  # ensure WDIO tests must pass first
+    needs: build     # removed dependence on WDIO
 
     steps:
       - name: Checkout Code
