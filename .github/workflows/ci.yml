@@ -1,4 +1,4 @@
-name: Full CI Pipeline (Build → Selenium → Sonar)
+name: Full CI Pipeline (Build → WDIO → Sonar)
 
 on:
   push:
@@ -55,10 +55,11 @@ jobs:
           name: backend-build
           path: backend
 
+
   # ----------------------------------------------------------
-  # 2️⃣ SELENIUM UI TEST JOB
+  # 2️⃣ WDIO UI TEST JOB (replaces Selenium)
   # ----------------------------------------------------------
-  selenium-tests:
+  wdio-tests:
     runs-on: ubuntu-latest
     needs: build
 
@@ -71,7 +72,7 @@ jobs:
         with:
           node-version: 18
 
-      # Install all modules
+      # Install dependencies
       - name: Install Backend Dependencies
         working-directory: backend
         run: npm install
@@ -80,18 +81,18 @@ jobs:
         working-directory: frontend
         run: npm install
 
-      - name: Install Selenium Test Dependencies
+      - name: Install WDIO Test Dependencies
         working-directory: tests
         run: npm install
 
-      # Start backend server in background
-      - name: Start Backend
+      # Start backend server
+      - name: Start Backend Server
         working-directory: backend
         run: |
           nohup npm start &
           sleep 5
 
-      # Serve frontend build on port 3000
+      # Serve frontend build
       - name: Serve Frontend Build
         working-directory: frontend
         run: |
@@ -99,17 +100,18 @@ jobs:
           nohup serve -s build -l 3000 &
           sleep 5
 
-      # Run Selenium tests
-      - name: Run Selenium Tests
+      # Run WDIO tests
+      - name: Run WDIO Tests
         working-directory: tests
-        run: npx mocha "specs/*.test.js" --timeout 60000
+        run: npx wdio run wdio.conf.js
+
 
   # ----------------------------------------------------------
-  # 3️⃣ SONARCLOUD ANALYSIS (AFTER SELENIUM)
+  # 3️⃣ SONARCLOUD ANALYSIS
   # ----------------------------------------------------------
   sonar:
     runs-on: ubuntu-latest
-    needs: selenium-tests  # ensures correct order
+    needs: wdio-tests  # ensure WDIO tests must pass first
 
     steps:
       - name: Checkout Code
