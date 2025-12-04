@@ -1,0 +1,60 @@
+name: Build Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # -------------------------
+      # 1. Checkout code
+      # -------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # -------------------------
+      # 2. Show GitHub API Utilization
+      # -------------------------
+      - name: Show GitHub API Usage
+        run: |
+          echo "GitHub API Rate Limit:"
+          curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/rate_limit
+
+      # -------------------------
+      # 3. Setup Node.js
+      # -------------------------
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      # -------------------------
+      # 4. Install Dependencies
+      # -------------------------
+      - name: Install dependencies
+        run: npm install
+
+      # -------------------------
+      # 5. Run Build
+      # -------------------------
+      - name: Build project
+        run: npm run build --if-present
+
+      # -------------------------
+      # 6. Upload Build Artifacts
+      # -------------------------
+      - name: Upload Build Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: |
+            dist/
+            build/
+            out/
+            .next/
+            public/
