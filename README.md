@@ -223,6 +223,7 @@ It is structured cleanly enough to scale into a production-level app with only i
 
 ---
 
-Created by: **Yuvaraj(70003), Shivam(70010), Ganga(70019), Megha(70014)** 🚀  
+Created by: **Yuvaraj(70003), Rohit(70009), Krish(70033), Chandan(70039)** 🚀  
 Tech Stack: **Node.js, Express, JSON Storage, React**
+
 
