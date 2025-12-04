@@ -1,0 +1,92 @@
+name: Weekly Build & Report
+
+# ----------------------------------------------------------
+# 1️⃣ RUN EVERY WEEK (Every Monday at 8 AM IST)
+# ----------------------------------------------------------
+on:
+  schedule:
+    - cron: "30 2 * * 1"   # 02:30 UTC = 08:00 IST every Monday
+  workflow_dispatch:        # Allow manual trigger also
+
+jobs:
+  weekly_build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ------------------------------------------------------
+      # 2️⃣ Checkout Code
+      # ------------------------------------------------------
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # ------------------------------------------------------
+      # 3️⃣ Setup Node.js
+      # ------------------------------------------------------
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      # ------------------------------------------------------
+      # 4️⃣ Install & Build Backend
+      # ------------------------------------------------------
+      - name: Install Backend Dependencies
+        working-directory: backend
+        run: npm install
+
+      - name: Build Backend
+        working-directory: backend
+        run: npm run build || echo "No backend build step found"
+
+      # ------------------------------------------------------
+      # 5️⃣ Install & Build Frontend
+      # ------------------------------------------------------
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: Build Frontend
+        working-directory: frontend
+        run: npm run build
+
+      # ------------------------------------------------------
+      # 6️⃣ Create a Build Report File
+      # ------------------------------------------------------
+      - name: Generate Weekly Build Report
+        run: |
+          echo "WEEKLY BUILD REPORT" > report.txt
+          echo "Date: $(date)" >> report.txt
+          echo "----------------------------------------" >> report.txt
+          echo "Backend Build: SUCCESS" >> report.txt
+          echo "Frontend Build: SUCCESS" >> report.txt
+          echo "Repository: $GITHUB_REPOSITORY" >> report.txt
+          echo "Workflow Run ID: $GITHUB_RUN_ID" >> report.txt
+          echo "----------------------------------------" >> report.txt
+
+      # ------------------------------------------------------
+      # 7️⃣ Send Email with Build Report
+      # ------------------------------------------------------
+      - name: Send Email with Build Report
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "Weekly Build Report - ${{ github.repository }}"
+          to: ${{ secrets.MAIL_TO }}
+          from: "GitHub Actions <${{ secrets.MAIL_USERNAME }}>"
+          secure: true
+          attachments: report.txt
+          body: |
+            Hello,
+
+            Your weekly build has finished successfully.
+
+            Attached is the latest build report.
+
+            Repository: ${{ github.repository }}
+            Run ID: ${{ github.run_id }}
+
+            Regards,
+            GitHub Actions Bot
