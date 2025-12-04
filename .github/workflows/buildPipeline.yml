@@ -1,0 +1,94 @@
+name: Full Build Pipeline (Backend + Frontend + Artifacts)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # ----------------------------------------------------------
+  # 1️⃣ BUILD JOB
+  # ----------------------------------------------------------
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ------------------------------------------------------
+      # 1. Checkout Code
+      # ------------------------------------------------------
+      - name: Checkout Code from Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # ------------------------------------------------------
+      # 2. Show GitHub API Utilization
+      # ------------------------------------------------------
+      - name: Display GitHub API Utilization (Rate Limit Info)
+        run: |
+          echo "================ GITHUB API RATE LIMIT ================"
+          curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/rate_limit
+          echo "======================================================="
+
+      # ------------------------------------------------------
+      # 3. Setup Node.js Runtime (v18)
+      # ------------------------------------------------------
+      - name: Setup Node.js Environment (v18)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      # ------------------------------------------------------
+      # 4. Install Backend Dependencies
+      # ------------------------------------------------------
+      - name: Install Backend Dependencies
+        working-directory: backend
+        run: |
+          echo "Installing backend dependencies..."
+          npm install
+
+      # ------------------------------------------------------
+      # 5. Build Backend Application
+      # ------------------------------------------------------
+      - name: Build Backend Application
+        working-directory: backend
+        run: |
+          echo "Running backend build..."
+          npm run build || echo "⚠️ No explicit backend build script found"
+
+      # ------------------------------------------------------
+      # 6. Install Frontend Dependencies
+      # ------------------------------------------------------
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: |
+          echo "Installing frontend dependencies..."
+          npm install
+
+      # ------------------------------------------------------
+      # 7. Build Frontend Application
+      # ------------------------------------------------------
+      - name: Build Frontend Application
+        working-directory: frontend
+        run: |
+          echo "Running frontend build..."
+          npm run build
+
+      # ------------------------------------------------------
+      # 8. Upload Frontend Build Artifact
+      # ------------------------------------------------------
+      - name: Upload Frontend Build Folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/build
+
+      # ------------------------------------------------------
+      # 9. Upload Backend Build Artifact
+      # ------------------------------------------------------
+      - name: Upload Backend Build Folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-build
+          path: backend
